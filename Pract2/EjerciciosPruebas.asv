@@ -83,7 +83,7 @@ sk_bk_t{3} = bk_t.* sk_t{3}; % ---> Multiplicamos la señal
 
 
 % Graficar las señales moduladas (inciso 1)
-figure(3)
+figure(9)
 for i = 1:Nc
     subplot(2, 4, i)
     plot(t, real(sk_bk_t{1}(i, :)));
@@ -100,7 +100,7 @@ mag_sk_bk_t{1} = abs(sk_bk_t{1});
 mag_sk_bk_t{2} = abs(sk_bk_t{2});
 mag_sk_bk_t{3} = abs(sk_bk_t{3});
 
-figure(4) %Graficamos la señal multiplicada
+figure(2) %Graficamos la señal multiplicada
  for i=1:Nc % las 8 subportadoras
     subplot(2,4,i)
     plot(t, mag_sk_bk_t{1}(i, :));
@@ -112,11 +112,10 @@ sgtitle('Magnitud de los Símbolos Modulados con deltaF(1)');
 
 N = 1000000; % Número de puntos para la FFT
 
-% Creamos un vetor para graficar todas las sub-portadoras
-% Espaciamos de manera lineal dos valores que nos dan un intervalo
+%Espaciamos de manera lineal dos valores que nos dan un intervalo
 w = linspace(-1/deltaT/2,1/deltaT/2,N)*2*pi;
 
-% Para los espectros de cada subportadora
+figure(3) % Graficamos los espectros de cada subportadora
 %Para inciso 1
 sk_bk_f{1} = zeros(8,N);
 
@@ -124,13 +123,12 @@ sk_bk_f{1} = zeros(8,N);
 sk_bk_f{2} = zeros(8,N);
 sk_bk_f{3} = zeros(8,N);
 
-figure(5) % Graficamos los espectros de cada subportadora
 % Para graficar el espectro calculamos la fft de los 8 simbolos
 for i=1:Nc
     %Para inciso 1
     subplot(2,4,i)
-    sk_bk_f{1}(i,:) = fftshift(fft(sk_bk_t{1}(i,:),N))*deltaT; % fft
-    plot(w/(2*pi),abs(sk_bk_f{1}(i,:))) % raices cada w/2pi
+    sk_bk_f{1}(i,:) = fftshift(fft(sk_bk_t{1}(i,:),N))*deltaT;
+    plot(w/(2*pi),abs(sk_bk_f{1}(i,:)))
     axis([-4000+1600*(i-1) 4000+1600*(i-1) 0 1.1*max(abs(sk_bk_f{1}(i,:)))])
     hold on;
 
@@ -150,8 +148,8 @@ for i=1:Nc
 end
 
 
-figure(6) %Graficamos todos los espectros traslapados
-for i=1:Nc % Nc numero de sub-portadoras
+figure(4) %Graficamos todos los espectros traslapados
+for i=1:Nc
     plot(w/(2*pi),(abs(sk_bk_f{1}(i,:))))
     hold on
     grid on;
@@ -166,17 +164,16 @@ axis([-5000 15000 0 1.1*max(abs(sk_bk_f{1}(1,:)))]);
 %Obtenga la señal multiplexada 𝑠(𝑡) = ∑ 𝑏𝑘(𝑡) ∙ 𝑠𝑘(𝑡) 𝑘=0 y grafique su magnitud. 
 %Además, obtenga el espectro de esta señal, al que se le denominará S(f), y grafique la magnitud de éste
 
-% Obtenemos s(t) de cada simbolo que tiene duración tu y tiene 10 muestras
-% Para inciso 2
+%-------------  Obtenemos s(t) ------------------------
+%Para inciso 2
 s_t{1} = zeros(1,length(t));
 
-% Para inciso 3
+%Para inciso 3
 s_t{2} = zeros(1,length(t));
 s_t{3} = zeros(1,length(t));
 
-% Para cada simbolo que tiene una duracion de Tu llamada t y tenemos 8 simb
-for tiempo = 1: length(t)
-    for k = 0:7 % Para las 8 sub-portadoras
+for tiempo=1: length(t)
+    for k=0:7
         %Para inciso 2
         s_t{1}(1,tiempo) = s_t{1}(1,tiempo) + sk_bk_t{1}(k+1,tiempo);
 
@@ -186,8 +183,8 @@ for tiempo = 1: length(t)
     end
 end
 
-figure(7) 
-subplot(2,1,1) % Graficamos la señal multiplexada en función del tiempo
+figure(5) 
+subplot(2,1,1) %Graficamos la señal multiplexada en función del tiempo
 plot(t, abs(s_t{1}))
 ylim([0 1.1*max(abs(s_t{1}))])
 title('Señal Multiplexada en tiempo s(t)')
@@ -216,10 +213,10 @@ grid on
 %Repita las actividades 1 y 2 para Δf=2,000 y 3,200 Hz.
 
 
-figure(8) % Graficamos las señales multiplexadas para f=1600, f=2000, f=3200 
+figure(6) %Graficamos las señales multiplexadas para f=1600, f=2000, f=3200 
 
-subplot(3,1,1) % Graficamos la señal multiplexada f= 200
-plot(w/(2*pi),abs(S_f{1})) % graficamos nuestra señal multiplexada en frecuencia
+subplot(3,1,1)%Graficamos la señal multiplexada f=1600
+plot(w/(2*pi),abs(S_f{1}))
 axis([-15000 25000 0 1.1*max(abs(S_f{1}))]);
 title('Señal Multiplexada en frecuencia S(f) f=1600')
 xlabel('Hz');
@@ -250,7 +247,7 @@ grid on
 modulo = [6 8 16 32];
 
 %Obtenemos todas las frecuencias
-figure(9)
+figure(7)
 for i=1:length(modulo)
     fsn{i} = modulo(i)*1/Tu;
     Tsn{i} = 1/fsn{i};
